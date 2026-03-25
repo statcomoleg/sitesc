@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+
+Sitemap: https://stat-credit.ru/sitemap.xml

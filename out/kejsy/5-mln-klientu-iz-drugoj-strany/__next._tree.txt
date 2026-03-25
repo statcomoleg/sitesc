@@ -1,0 +1,8 @@
+:HL["/_next/static/chunks/0ml7mm2f8amri.css","style"]
+:HL["/_next/static/media/1bffadaabf893a1e-s.p.16ipb6fqu393i.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/4e1c87b7aa9e2f2f-s.p.12gpghvmuotht.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/9c72aa0f40e4eef8-s.p.0m6w47a4e5dy9.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/b59689b1142d37ce-s.p.0f8~qglggluhl.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/dd14639a62c56cb2-s.p.06a7f.f9wwf6c.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"kejsy","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"5-mln-klientu-iz-drugoj-strany","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"s1YZmHCYrjTHW1scdU5zP"}
