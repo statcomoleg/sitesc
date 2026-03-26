@@ -29,6 +29,8 @@ export function ContactModalProvider({ children }: { children: ReactNode }) {
   const [selectedService, setSelectedService] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const firstInputRef = useRef<HTMLInputElement>(null);
@@ -43,6 +45,8 @@ export function ContactModalProvider({ children }: { children: ReactNode }) {
     setName("");
     setPhone("");
     setSelectedService("");
+    setErrorMessage("");
+    setIsSubmitting(false);
     setSubmitted(false);
   }, []);
 
@@ -86,9 +90,37 @@ export function ContactModalProvider({ children }: { children: ReactNode }) {
     setPhone(formatPhone(digits));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          phone,
+          serviceSlug: selectedService || "",
+          pageUrl: window.location.href,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+
+      setSubmitted(true);
+    } catch {
+      setErrorMessage("Не удалось отправить заявку. Попробуйте ещё раз через минуту.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -203,11 +235,17 @@ export function ContactModalProvider({ children }: { children: ReactNode }) {
 
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 gradient-btn px-6 py-3.5 mt-2"
+                  disabled={isSubmitting}
+                  className="w-full flex items-center justify-center gap-2 gradient-btn px-6 py-3.5 mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   <Send size={18} />
-                  Отправить заявку
+                  {isSubmitting ? "Отправляем..." : "Отправить заявку"}
                 </button>
+                {errorMessage && (
+                  <p className="text-sm text-red-300 mt-1">
+                    {errorMessage}
+                  </p>
+                )}
               </form>
             ) : (
               <div className="p-8 text-center bg-dark-card">

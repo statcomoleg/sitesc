@@ -1,3 +1,6 @@
 node_modules
 .next
 *.zip
+.env
+.env.local
+.env.production
