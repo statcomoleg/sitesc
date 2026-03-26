@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { Send, Phone, ArrowUpRight } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 const quickLinks = [
   { label: "Главная", href: "/" },
@@ -8,6 +11,20 @@ const quickLinks = [
 ];
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/mexico")) {
+    return (
+      <footer className="relative bg-dark border-t border-white/[0.06]" role="contentinfo">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <p className="text-center text-text-muted/60 text-sm">
+            &copy; 2026 Стат-Кредит. Все права защищены.
+          </p>
+        </div>
+      </footer>
+    );
+  }
+
   return (
     <footer className="relative bg-dark overflow-hidden" role="contentinfo">
       <div className="absolute top-0 left-0 right-0">
