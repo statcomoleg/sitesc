@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 
 export const runtime = "nodejs";
 
@@ -34,6 +35,11 @@ function getEnv(name: string): string {
     throw new Error(`Missing required env var: ${name}`);
   }
   return value;
+}
+
+function getOptionalEnv(name: string): string | undefined {
+  const value = process.env[name]?.trim();
+  return value || undefined;
 }
 
 function escapeHtml(value: string): string {
@@ -81,6 +87,69 @@ async function sendToTelegram(message: string) {
   }
 }
 
+async function sendToEmail(messageText: string) {
+  const receiverEmail = getOptionalEnv("QUIZ_RECEIVER_EMAIL") || "olegstatcom23@yandex.ru";
+  const smtpUser = getOptionalEnv("SMTP_USER");
+  const smtpPass = getOptionalEnv("SMTP_PASS");
+
+  if (!smtpUser || !smtpPass) {
+    return false;
+  }
+
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
+    port: Number(process.env.SMTP_PORT || 465),
+    secure: process.env.SMTP_SECURE ? process.env.SMTP_SECURE === "true" : true,
+    auth: {
+      user: smtpUser,
+      pass: smtpPass,
+    },
+  });
+
+  await transporter.sendMail({
+    from: process.env.SMTP_FROM || smtpUser,
+    to: receiverEmail,
+    subject: "Новая заявка: квиз ипотека",
+    text: messageText.replace(/<[^>]+>/g, ""),
+  });
+
+  return true;
+}
+
+async function sendToRelayWebhook(payload: {
+  message: string;
+  lead: {
+    name: string;
+    city: string;
+    phone: string;
+    messenger: string;
+  };
+  answers: QuizAnswersPayload;
+  computed: {
+    objectPrice: number;
+    downPayment: number;
+  };
+  pageUrl: string;
+}) {
+  const relayUrl = process.env.TELEGRAM_RELAY_WEBHOOK_URL?.trim();
+  if (!relayUrl) {
+    return false;
+  }
+
+  const response = await fetch(relayUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const responseText = await response.text();
+    throw new Error(`Relay webhook error: ${response.status} ${responseText}`);
+  }
+
+  return true;
+}
+
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as SubmitPayload;
@@ -125,7 +194,33 @@ export async function POST(req: Request) {
       `<b>Дата:</b> ${escapeHtml(new Date().toLocaleString("ru-RU"))}`,
     ].join("\n");
 
-    await sendToTelegram(message);
+    try {
+      const sentViaRelay = await sendToRelayWebhook({
+        message,
+        lead: {
+          name,
+          city,
+          phone,
+          messenger,
+        },
+        answers,
+        computed: {
+          objectPrice,
+          downPayment,
+        },
+        pageUrl,
+      });
+
+      if (!sentViaRelay) {
+        await sendToTelegram(message);
+      }
+    } catch (telegramError) {
+      // If Telegram is unavailable, do not lose the lead: fallback to email.
+      const sentToEmail = await sendToEmail(message);
+      if (!sentToEmail) {
+        throw telegramError;
+      }
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
