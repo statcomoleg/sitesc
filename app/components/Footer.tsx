@@ -13,6 +13,10 @@ const quickLinks = [
 export function Footer() {
   const pathname = usePathname();
 
+  if (pathname.startsWith("/ipoteka")) {
+    return null;
+  }
+
   if (pathname.startsWith("/mexico")) {
     return (
       <footer className="relative bg-dark border-t border-white/[0.06]" role="contentinfo">
