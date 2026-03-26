@@ -194,6 +194,19 @@ export async function POST(req: Request) {
       `<b>Дата:</b> ${escapeHtml(new Date().toLocaleString("ru-RU"))}`,
     ].join("\n");
 
+    let sentToEmail = false;
+    let sentToTelegramOrRelay = false;
+    let lastError: unknown = null;
+
+    // Primary backup channel: email. If this succeeds, we keep the lead.
+    try {
+      sentToEmail = await sendToEmail(message);
+    } catch (emailError) {
+      lastError = emailError;
+      console.error("Quiz ipoteka email fallback error:", emailError);
+    }
+
+    // Secondary channel: relay/telegram (non-blocking if email already succeeded).
     try {
       const sentViaRelay = await sendToRelayWebhook({
         message,
@@ -211,15 +224,19 @@ export async function POST(req: Request) {
         pageUrl,
       });
 
-      if (!sentViaRelay) {
+      if (sentViaRelay) {
+        sentToTelegramOrRelay = true;
+      } else {
         await sendToTelegram(message);
+        sentToTelegramOrRelay = true;
       }
     } catch (telegramError) {
-      // If Telegram is unavailable, do not lose the lead: fallback to email.
-      const sentToEmail = await sendToEmail(message);
-      if (!sentToEmail) {
-        throw telegramError;
-      }
+      lastError = telegramError;
+      console.error("Quiz ipoteka telegram delivery error:", telegramError);
+    }
+
+    if (!sentToEmail && !sentToTelegramOrRelay) {
+      throw lastError || new Error("No delivery channels available");
     }
 
     return NextResponse.json({ ok: true });
