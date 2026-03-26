@@ -6,6 +6,7 @@ export interface Case {
   category: string;
   result: string;
   screenshots?: string[];
+  hidden?: boolean;
 }
 
 export const cases: Case[] = [
@@ -19,6 +20,7 @@ export const cases: Case[] = [
     category: "Кредитные каникулы",
     result: "Отсрочка на 12 месяцев",
     screenshots: ["/reviews/ot1.png", "/reviews/ot11.png", "/reviews/ot111.png"],
+    hidden: true,
   },
   {
     slug: "5-mln-klientu-iz-drugoj-strany",
@@ -48,3 +50,5 @@ export const cases: Case[] = [
     screenshots: ["/reviews/ot3.jpg"],
   },
 ];
+
+export const visibleCases = cases.filter((caseItem) => !caseItem.hidden);

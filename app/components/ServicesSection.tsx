@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { services } from "@/app/data/services";
+import { visibleServices } from "@/app/data/services";
 import { ServiceCard } from "./ServiceCard";
 import { ScrollReveal } from "./ScrollReveal";
 import { MeshGradient } from "./MeshGradient";
@@ -27,7 +27,7 @@ export function ServicesSection() {
         </ScrollReveal>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {services.map((service, i) => (
+          {visibleServices.map((service, i) => (
             <ScrollReveal key={service.slug} delay={i * 80}>
               <ServiceCard service={service} featured={i === 0} />
             </ScrollReveal>

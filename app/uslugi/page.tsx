@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { services } from "@/app/data/services";
+import { visibleServices } from "@/app/data/services";
 import { ServiceCard } from "@/app/components/ServiceCard";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { MeshGradient } from "@/app/components/MeshGradient";
@@ -51,7 +51,7 @@ export default function AllServicesPage() {
         </ScrollReveal>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {services.map((service, i) => (
+          {visibleServices.map((service, i) => (
             <ScrollReveal key={service.slug} delay={i * 80}>
               <ServiceCard service={service} />
             </ScrollReveal>
@@ -66,7 +66,7 @@ export default function AllServicesPage() {
             "@context": "https://schema.org",
             "@type": "ItemList",
             name: "Услуги Стат-Кредит",
-            itemListElement: services.map((s, i) => ({
+            itemListElement: visibleServices.map((s, i) => ({
               "@type": "ListItem",
               position: i + 1,
               name: s.title,

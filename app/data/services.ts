@@ -4,6 +4,7 @@ export interface Service {
   shortDescription: string;
   fullDescription: string;
   icon: string;
+  hidden?: boolean;
 }
 
 export const services: Service[] = [
@@ -33,6 +34,7 @@ export const services: Service[] = [
     fullDescription:
       "У нас есть уникальный продукт, благодаря которому любой житель РФ может получить отсрочку платежей по кредитам, займам, ипотеке во всех банках на срок до 12 месяцев. Без процентов, штрафов и вреда для КИ.\n\nЕдинственное условие: отсутствие действующих просрочек.\n\nЕсли вы хотите выдохнуть и собраться с силами, а кредитная нагрузка слишком высокая — обратитесь к нам. Стоимость кредитных каникул определяется индивидуально, но чаще всего она ниже, чем ваши ежемесячные платежи по кредитным продуктам.",
     icon: "CalendarOff",
+    hidden: true,
   },
   {
     slug: "vozvrat-strakhovki",
@@ -53,3 +55,5 @@ export const services: Service[] = [
     icon: "TrendingUp",
   },
 ];
+
+export const visibleServices = services.filter((service) => !service.hidden);

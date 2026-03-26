@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight, CheckCircle } from "lucide-react";
-import { cases } from "@/app/data/cases";
+import { visibleCases } from "@/app/data/cases";
 import { CaseContactButton } from "./CaseContactButton";
 import { MeshGradient } from "@/app/components/MeshGradient";
 import { ReviewGallery } from "@/app/components/ReviewGallery";
@@ -12,12 +12,12 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  return cases.map((c) => ({ slug: c.slug }));
+  return visibleCases.map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const caseItem = cases.find((c) => c.slug === slug);
+  const caseItem = visibleCases.find((c) => c.slug === slug);
   if (!caseItem) return {};
   return {
     title: caseItem.title,
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function CasePage({ params }: PageProps) {
   const { slug } = await params;
-  const caseItem = cases.find((c) => c.slug === slug);
+  const caseItem = visibleCases.find((c) => c.slug === slug);
   if (!caseItem) notFound();
 
   return (

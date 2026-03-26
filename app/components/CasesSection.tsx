@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Send } from "lucide-react";
-import { cases } from "@/app/data/cases";
+import { visibleCases } from "@/app/data/cases";
 import { CaseCard } from "./CaseCard";
 import { ScrollReveal } from "./ScrollReveal";
 import { MeshGradient } from "./MeshGradient";
@@ -50,7 +50,7 @@ export function CasesSection() {
         </ScrollReveal>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {cases.map((c, i) => (
+          {visibleCases.map((c, i) => (
             <ScrollReveal key={c.slug} delay={i * 100}>
               <CaseCard caseItem={c} />
             </ScrollReveal>

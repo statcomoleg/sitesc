@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import * as LucideIcons from "lucide-react";
-import { services } from "@/app/data/services";
+import { visibleServices } from "@/app/data/services";
 import { ContactButton } from "./ContactButton";
 import { MeshGradient } from "@/app/components/MeshGradient";
 
@@ -13,12 +13,12 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  return services.map((s) => ({ slug: s.slug }));
+  return visibleServices.map((s) => ({ slug: s.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const service = services.find((s) => s.slug === slug);
+  const service = visibleServices.find((s) => s.slug === slug);
   if (!service) return {};
   return {
     title: service.title,
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ServicePage({ params }: PageProps) {
   const { slug } = await params;
-  const service = services.find((s) => s.slug === slug);
+  const service = visibleServices.find((s) => s.slug === slug);
   if (!service) notFound();
 
   const IconComponent = (LucideIcons as unknown as Record<string, ComponentType<{ size?: number; className?: string }>>)[service.icon] ?? LucideIcons.HelpCircle;

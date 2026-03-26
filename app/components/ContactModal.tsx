@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { X, Send, ChevronDown } from "lucide-react";
-import { services } from "@/app/data/services";
+import { visibleServices } from "@/app/data/services";
 
 interface ContactModalContextType {
   openModal: (preselectedService?: string) => void;
@@ -186,7 +186,7 @@ export function ContactModalProvider({ children }: { children: ReactNode }) {
                       }`}
                     >
                       <option value="">Выберите услугу</option>
-                      {services.map((s) => (
+                      {visibleServices.map((s) => (
                         <option key={s.slug} value={s.slug}>
                           {s.title}
                         </option>

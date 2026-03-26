@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
-import { services } from "@/app/data/services";
-import { cases } from "@/app/data/cases";
+import { visibleServices } from "@/app/data/services";
+import { visibleCases } from "@/app/data/cases";
 
 const BASE_URL = "https://stat-credit.ru";
 
@@ -26,14 +26,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const servicePages: MetadataRoute.Sitemap = services.map((s) => ({
+  const servicePages: MetadataRoute.Sitemap = visibleServices.map((s) => ({
     url: `${BASE_URL}/uslugi/${s.slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
 
-  const casePages: MetadataRoute.Sitemap = cases.map((c) => ({
+  const casePages: MetadataRoute.Sitemap = visibleCases.map((c) => ({
     url: `${BASE_URL}/kejsy/${c.slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,

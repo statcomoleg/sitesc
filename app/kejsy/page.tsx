@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { cases } from "@/app/data/cases";
+import { visibleCases } from "@/app/data/cases";
 import { CaseCard } from "@/app/components/CaseCard";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { MeshGradient } from "@/app/components/MeshGradient";
@@ -52,7 +52,7 @@ export default function AllCasesPage() {
         </ScrollReveal>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {cases.map((c, i) => (
+          {visibleCases.map((c, i) => (
             <ScrollReveal key={c.slug} delay={i * 80}>
               <CaseCard caseItem={c} />
             </ScrollReveal>
