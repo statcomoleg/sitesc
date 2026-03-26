@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { mkdir, appendFile } from "node:fs/promises";
+import path from "node:path";
 
 export const runtime = "nodejs";
 
@@ -114,6 +116,35 @@ async function sendToEmail(messageText: string) {
   });
 
   return true;
+}
+
+async function persistLeadToFile(payload: {
+  message: string;
+  lead: {
+    name: string;
+    city: string;
+    phone: string;
+    messenger: string;
+  };
+  answers: QuizAnswersPayload;
+  computed: {
+    objectPrice: number;
+    downPayment: number;
+  };
+  pageUrl: string;
+}) {
+  const storageDir = process.env.QUIZ_LEADS_DIR?.trim() || path.join(process.cwd(), "storage");
+  const filePath = path.join(storageDir, "quiz-ipoteka-leads.jsonl");
+
+  await mkdir(storageDir, { recursive: true });
+
+  const record = {
+    savedAt: new Date().toISOString(),
+    ...payload,
+  };
+
+  await appendFile(filePath, `${JSON.stringify(record)}\n`, "utf-8");
+  return filePath;
 }
 
 async function sendToRelayWebhook(payload: {
@@ -236,7 +267,27 @@ export async function POST(req: Request) {
     }
 
     if (!sentToEmail && !sentToTelegramOrRelay) {
-      throw lastError || new Error("No delivery channels available");
+      const fallbackFilePath = await persistLeadToFile({
+        message,
+        lead: {
+          name,
+          city,
+          phone,
+          messenger,
+        },
+        answers,
+        computed: {
+          objectPrice,
+          downPayment,
+        },
+        pageUrl,
+      });
+      console.warn(
+        "Quiz ipoteka lead saved to local file fallback:",
+        fallbackFilePath,
+        "lastError:",
+        lastError
+      );
     }
 
     return NextResponse.json({ ok: true });
