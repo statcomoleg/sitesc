@@ -6,8 +6,15 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
+        disallow: ["/api/", "/admin/"],
+      },
+      {
+        userAgent: "Yandex",
+        allow: "/",
+        disallow: ["/api/", "/admin/"],
       },
     ],
     sitemap: "https://stat-credit.ru/sitemap.xml",
+    host: "https://stat-credit.ru",
   };
 }

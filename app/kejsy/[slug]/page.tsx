@@ -20,8 +20,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const caseItem = visibleCases.find((c) => c.slug === slug);
   if (!caseItem) return {};
   return {
-    title: caseItem.title,
+    title: `${caseItem.title} — кейс Стат-Кредит`,
     description: caseItem.shortDescription,
+    keywords: [
+      "отзывы о кредитном брокере",
+      "реальные кейсы одобрения кредита",
+      caseItem.category.toLowerCase(),
+    ],
     alternates: { canonical: `https://stat-credit.ru/kejsy/${slug}` },
     openGraph: {
       title: `${caseItem.title} | Стат-Кредит`,
@@ -103,6 +108,44 @@ export default async function CasePage({ params }: PageProps) {
           </div>
         </div>
       </div>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Review",
+            itemReviewed: {
+              "@type": "FinancialService",
+              name: "Стат-Кредит",
+              url: "https://stat-credit.ru",
+            },
+            reviewBody: caseItem.shortDescription,
+            name: caseItem.title,
+            author: { "@type": "Organization", name: "Стат-Кредит" },
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: "5",
+              bestRating: "5",
+            },
+          }),
+        }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Главная", item: "https://stat-credit.ru" },
+              { "@type": "ListItem", position: 2, name: "Кейсы", item: "https://stat-credit.ru/kejsy" },
+              { "@type": "ListItem", position: 3, name: caseItem.title, item: `https://stat-credit.ru/kejsy/${slug}` },
+            ],
+          }),
+        }}
+      />
     </article>
   );
 }

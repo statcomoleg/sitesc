@@ -41,10 +41,10 @@ export function CasesSection() {
               Кейсы
             </span>
             <h2 className="font-[family-name:var(--font-heading)] text-[clamp(1.8rem,4vw,2.8rem)] font-bold text-text">
-              Реальные результаты
+              Реальные кейсы одобрения кредитов
             </h2>
             <p className="mt-4 text-text-muted text-lg max-w-xl mx-auto">
-              Истории наших клиентов, которым мы помогли решить финансовые задачи
+              Истории клиентов: одобрение кредита с плохой КИ, возврат страховок и другие результаты
             </p>
           </div>
         </ScrollReveal>

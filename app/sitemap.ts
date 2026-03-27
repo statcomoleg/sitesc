@@ -24,20 +24,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     },
+    {
+      url: `${BASE_URL}/ipoteka`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
   ];
 
   const servicePages: MetadataRoute.Sitemap = visibleServices.map((s) => ({
     url: `${BASE_URL}/uslugi/${s.slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
-    priority: 0.7,
+    priority: 0.8,
   }));
 
   const casePages: MetadataRoute.Sitemap = visibleCases.map((c) => ({
     url: `${BASE_URL}/kejsy/${c.slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
-    priority: 0.6,
+    priority: 0.7,
   }));
 
   return [...staticPages, ...servicePages, ...casePages];

@@ -26,7 +26,7 @@ export function AboutSection() {
               <div className="relative aspect-[4/3] rounded-3xl overflow-hidden gradient-border">
                 <Image
                   src="/pic1.jpg"
-                  alt="Олег С. — основатель Стат-Кредит"
+                  alt="Олег С. — основатель компании Стат-Кредит, кредитный брокер с опытом помощи в одобрении кредитов"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -46,7 +46,7 @@ export function AboutSection() {
                 О компании
               </span>
               <h2 className="font-[family-name:var(--font-heading)] text-[clamp(1.8rem,4vw,2.8rem)] font-bold text-text">
-                Компания Стат-Кредит
+                Преимущества работы с нами
               </h2>
             </ScrollReveal>
 

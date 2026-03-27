@@ -32,16 +32,16 @@ export function HeroSection() {
             </div>
 
             <h1 className="font-[family-name:var(--font-heading)] text-[clamp(2.5rem,6vw,4.5rem)] font-bold leading-[1.08] tracking-tight animate-[fadeInUp_0.6s_ease-out_0.1s_both]">
-              <span className="text-text">Финансовые решения</span>
+              <span className="text-text">Финансовая помощь:</span>
               <span className="block gradient-text mt-2">
-                для физических и&nbsp;юридических лиц
+                кредиты, ипотека, возврат страховок
               </span>
             </h1>
 
             <p className="mt-7 text-lg sm:text-xl text-text-muted leading-relaxed max-w-lg animate-[fadeInUp_0.6s_ease-out_0.2s_both]">
-              Помогаем получить кредит, одобрить ипотеку
-              и&nbsp;навести порядок в&nbsp;финансах. Работаем
-              с&nbsp;любой кредитной историей.
+              Помогаем получить кредит с&nbsp;плохой кредитной историей,
+              оформить ипотеку без&nbsp;банка и&nbsp;вернуть навязанные
+              страховки. Бесплатная консультация.
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row gap-4 animate-[fadeInUp_0.6s_ease-out_0.35s_both]">

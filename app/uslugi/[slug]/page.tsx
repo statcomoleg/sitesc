@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { visibleServices } from "@/app/data/services";
+import { serviceSeoData } from "@/app/data/service-seo";
 import { ContactButton } from "./ContactButton";
 import { MeshGradient } from "@/app/components/MeshGradient";
 
@@ -20,13 +21,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const service = visibleServices.find((s) => s.slug === slug);
   if (!service) return {};
+  const seo = serviceSeoData[slug];
   return {
-    title: service.title,
-    description: service.shortDescription,
+    title: seo?.title || service.title,
+    description: seo?.description || service.shortDescription,
+    keywords: seo?.keywords,
     alternates: { canonical: `https://stat-credit.ru/uslugi/${slug}` },
     openGraph: {
-      title: `${service.title} | Стат-Кредит`,
-      description: service.shortDescription,
+      title: `${seo?.title || service.title} | Стат-Кредит`,
+      description: seo?.description || service.shortDescription,
     },
   };
 }
@@ -36,7 +39,10 @@ export default async function ServicePage({ params }: PageProps) {
   const service = visibleServices.find((s) => s.slug === slug);
   if (!service) notFound();
 
+  const seo = serviceSeoData[slug];
   const IconComponent = (LucideIcons as unknown as Record<string, ComponentType<{ size?: number; className?: string }>>)[service.icon] ?? LucideIcons.HelpCircle;
+
+  const relatedServices = visibleServices.filter((s) => s.slug !== slug).slice(0, 2);
 
   return (
     <article className="relative py-28 sm:py-32 bg-dark overflow-hidden">
@@ -88,6 +94,49 @@ export default async function ServicePage({ params }: PageProps) {
             </div>
           </div>
         </div>
+
+        {seo?.faq && seo.faq.length > 0 && (
+          <div className="mt-10 gradient-border p-8 sm:p-12">
+            <h2 className="font-[family-name:var(--font-heading)] text-xl sm:text-2xl font-bold text-text mb-6">
+              Частые вопросы
+            </h2>
+            <div className="space-y-6">
+              {seo.faq.map((item, i) => (
+                <div key={i}>
+                  <h3 className="font-[family-name:var(--font-heading)] text-base sm:text-lg font-semibold text-text mb-2">
+                    {item.question}
+                  </h3>
+                  <p className="text-text-muted leading-relaxed">{item.answer}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {relatedServices.length > 0 && (
+          <div className="mt-10 gradient-border p-8 sm:p-12">
+            <h2 className="font-[family-name:var(--font-heading)] text-xl sm:text-2xl font-bold text-text mb-4">
+              Смежные услуги
+            </h2>
+            <div className="space-y-3">
+              {relatedServices.map((rs) => (
+                <Link
+                  key={rs.slug}
+                  href={`/uslugi/${rs.slug}`}
+                  className="block text-primary hover:text-sand transition-colors font-medium"
+                >
+                  {rs.title} →
+                </Link>
+              ))}
+              <Link
+                href="/kejsy"
+                className="block text-sand hover:text-primary transition-colors font-medium"
+              >
+                Смотрите реальные результаты наших клиентов →
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
 
       <script
@@ -97,11 +146,56 @@ export default async function ServicePage({ params }: PageProps) {
             "@context": "https://schema.org",
             "@type": "Service",
             name: service.title,
-            description: service.shortDescription,
+            description: seo?.description || service.shortDescription,
             provider: {
-              "@type": "Organization",
+              "@type": "FinancialService",
               name: "Стат-Кредит",
+              url: "https://stat-credit.ru",
             },
+            areaServed:
+              slug === "ipoteka-bez-ki"
+                ? [
+                    { "@type": "City", name: "Москва" },
+                    { "@type": "City", name: "Санкт-Петербург" },
+                    { "@type": "AdministrativeArea", name: "Московская область" },
+                    { "@type": "AdministrativeArea", name: "Ленинградская область" },
+                  ]
+                : { "@type": "Country", name: "Россия" },
+          }),
+        }}
+      />
+
+      {seo?.faq && seo.faq.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: seo.faq.map((item) => ({
+                "@type": "Question",
+                name: item.question,
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: item.answer,
+                },
+              })),
+            }),
+          }}
+        />
+      )}
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Главная", item: "https://stat-credit.ru" },
+              { "@type": "ListItem", position: 2, name: "Услуги", item: "https://stat-credit.ru/uslugi" },
+              { "@type": "ListItem", position: 3, name: service.title, item: `https://stat-credit.ru/uslugi/${slug}` },
+            ],
           }),
         }}
       />

@@ -10,6 +10,13 @@ const quickLinks = [
   { label: "Кейсы", href: "/kejsy" },
 ];
 
+const serviceLinks = [
+  { label: "Помощь в одобрении кредита", href: "/uslugi/odobrenie-kredita" },
+  { label: "Ипотека без банка", href: "/uslugi/ipoteka-bez-ki" },
+  { label: "Возврат кредитной страховки", href: "/uslugi/vozvrat-strakhovki" },
+  { label: "Исправление кредитной истории", href: "/uslugi/uluchshenie-ki" },
+];
+
 export function Footer() {
   const pathname = usePathname();
 
@@ -38,7 +45,7 @@ export function Footer() {
       <div className="grain absolute inset-0" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
           <div className="sm:col-span-2 lg:col-span-1">
             <Link
               href="/"
@@ -57,6 +64,25 @@ export function Footer() {
             </h3>
             <ul className="space-y-2.5">
               {quickLinks.map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    className="group inline-flex items-center gap-1 text-text-muted text-sm hover:text-text transition-colors duration-200 cursor-pointer"
+                  >
+                    {l.label}
+                    <ArrowUpRight size={12} className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-[family-name:var(--font-heading)] text-sm font-semibold text-text uppercase tracking-wider mb-4">
+              Услуги
+            </h3>
+            <ul className="space-y-2.5">
+              {serviceLinks.map((l) => (
                 <li key={l.href}>
                   <Link
                     href={l.href}

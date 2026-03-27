@@ -18,10 +18,10 @@ export function ServicesSection() {
               Услуги
             </span>
             <h2 className="font-[family-name:var(--font-heading)] text-[clamp(1.8rem,4vw,2.8rem)] font-bold text-text">
-              Чем мы можем помочь
+              Как мы помогаем получить кредит и решить финансовые задачи
             </h2>
             <p className="mt-4 text-text-muted text-lg max-w-xl mx-auto">
-              Полный спектр финансовых услуг для физических и юридических лиц
+              Одобрение кредитов, ипотека без банков, возврат страховок и исправление кредитной истории
             </p>
           </div>
         </ScrollReveal>
