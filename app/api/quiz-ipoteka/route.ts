@@ -167,10 +167,16 @@ async function sendToRelayWebhook(payload: {
     return false;
   }
 
+  const chatId = getOptionalEnv("TELEGRAM_CHAT_ID") || "";
+
   const response = await fetch(relayUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      ...payload,
+      chatId,
+      parseMode: "HTML",
+    }),
   });
 
   if (!response.ok) {
