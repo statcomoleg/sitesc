@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
 import { mkdir, appendFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -89,50 +88,15 @@ async function sendToTelegram(message: string) {
   }
 }
 
-async function sendToEmail(messageText: string) {
-  const receiverEmail = getOptionalEnv("QUIZ_RECEIVER_EMAIL") || "olegstatcom23@yandex.ru";
-  const smtpUser = getOptionalEnv("SMTP_USER");
-  const smtpPass = getOptionalEnv("SMTP_PASS");
-
-  if (!smtpUser || !smtpPass) {
-    return false;
-  }
-
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "smtp.gmail.com",
-    port: Number(process.env.SMTP_PORT || 465),
-    secure: process.env.SMTP_SECURE ? process.env.SMTP_SECURE === "true" : true,
-    auth: {
-      user: smtpUser,
-      pass: smtpPass,
-    },
-  });
-
-  await transporter.sendMail({
-    from: process.env.SMTP_FROM || smtpUser,
-    to: receiverEmail,
-    subject: "Новая заявка: квиз ипотека",
-    text: messageText.replace(/<[^>]+>/g, ""),
-  });
-
-  return true;
+interface RelayPayload {
+  message: string;
+  lead: { name: string; city: string; phone: string; messenger: string };
+  answers: QuizAnswersPayload;
+  computed: { objectPrice: number; downPayment: number };
+  pageUrl: string;
 }
 
-async function persistLeadToFile(payload: {
-  message: string;
-  lead: {
-    name: string;
-    city: string;
-    phone: string;
-    messenger: string;
-  };
-  answers: QuizAnswersPayload;
-  computed: {
-    objectPrice: number;
-    downPayment: number;
-  };
-  pageUrl: string;
-}) {
+async function persistLeadToFile(payload: RelayPayload) {
   const storageDir = process.env.QUIZ_LEADS_DIR?.trim() || path.join(process.cwd(), "storage");
   const filePath = path.join(storageDir, "quiz-ipoteka-leads.jsonl");
 
@@ -147,21 +111,7 @@ async function persistLeadToFile(payload: {
   return filePath;
 }
 
-async function sendToRelayWebhook(payload: {
-  message: string;
-  lead: {
-    name: string;
-    city: string;
-    phone: string;
-    messenger: string;
-  };
-  answers: QuizAnswersPayload;
-  computed: {
-    objectPrice: number;
-    downPayment: number;
-  };
-  pageUrl: string;
-}) {
+async function sendToRelayWebhook(payload: RelayPayload) {
   const relayUrl = process.env.TELEGRAM_RELAY_WEBHOOK_URL?.trim();
   if (!relayUrl) {
     return false;
@@ -231,10 +181,7 @@ export async function POST(req: Request) {
       `<b>Дата:</b> ${escapeHtml(new Date().toLocaleString("ru-RU"))}`,
     ].join("\n");
 
-    let sentToTelegramOrRelay = false;
-    let lastError: unknown = null;
-
-    const relayPayload = {
+    const relayPayload: RelayPayload = {
       message,
       lead: { name, city, phone, messenger },
       answers,
@@ -245,40 +192,16 @@ export async function POST(req: Request) {
     try {
       const sentViaRelay = await sendToRelayWebhook(relayPayload);
       if (sentViaRelay) {
-        sentToTelegramOrRelay = true;
-      } else {
-        await sendToTelegram(message);
-        sentToTelegramOrRelay = true;
+        return NextResponse.json({ ok: true });
       }
+      await sendToTelegram(message);
+      return NextResponse.json({ ok: true });
     } catch (telegramError) {
-      lastError = telegramError;
       console.error("Quiz ipoteka telegram delivery error:", telegramError);
     }
 
-    if (sentToTelegramOrRelay) {
-      sendToEmail(message).catch((err) =>
-        console.error("Quiz ipoteka email backup error (non-blocking):", err)
-      );
-      return NextResponse.json({ ok: true });
-    }
-
-    let sentToEmail = false;
-    try {
-      sentToEmail = await sendToEmail(message);
-    } catch (emailError) {
-      lastError = emailError;
-      console.error("Quiz ipoteka email fallback error:", emailError);
-    }
-
-    if (!sentToEmail) {
-      const fallbackFilePath = await persistLeadToFile(relayPayload);
-      console.warn(
-        "Quiz ipoteka lead saved to local file fallback:",
-        fallbackFilePath,
-        "lastError:",
-        lastError
-      );
-    }
+    const fallbackFilePath = await persistLeadToFile(relayPayload);
+    console.warn("Quiz ipoteka lead saved to local file fallback:", fallbackFilePath);
 
     return NextResponse.json({ ok: true });
   } catch (error) {
