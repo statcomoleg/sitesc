@@ -231,36 +231,19 @@ export async function POST(req: Request) {
       `<b>Дата:</b> ${escapeHtml(new Date().toLocaleString("ru-RU"))}`,
     ].join("\n");
 
-    let sentToEmail = false;
     let sentToTelegramOrRelay = false;
     let lastError: unknown = null;
 
-    // Primary backup channel: email. If this succeeds, we keep the lead.
-    try {
-      sentToEmail = await sendToEmail(message);
-    } catch (emailError) {
-      lastError = emailError;
-      console.error("Quiz ipoteka email fallback error:", emailError);
-    }
+    const relayPayload = {
+      message,
+      lead: { name, city, phone, messenger },
+      answers,
+      computed: { objectPrice, downPayment },
+      pageUrl,
+    };
 
-    // Secondary channel: relay/telegram (non-blocking if email already succeeded).
     try {
-      const sentViaRelay = await sendToRelayWebhook({
-        message,
-        lead: {
-          name,
-          city,
-          phone,
-          messenger,
-        },
-        answers,
-        computed: {
-          objectPrice,
-          downPayment,
-        },
-        pageUrl,
-      });
-
+      const sentViaRelay = await sendToRelayWebhook(relayPayload);
       if (sentViaRelay) {
         sentToTelegramOrRelay = true;
       } else {
@@ -272,22 +255,23 @@ export async function POST(req: Request) {
       console.error("Quiz ipoteka telegram delivery error:", telegramError);
     }
 
-    if (!sentToEmail && !sentToTelegramOrRelay) {
-      const fallbackFilePath = await persistLeadToFile({
-        message,
-        lead: {
-          name,
-          city,
-          phone,
-          messenger,
-        },
-        answers,
-        computed: {
-          objectPrice,
-          downPayment,
-        },
-        pageUrl,
-      });
+    if (sentToTelegramOrRelay) {
+      sendToEmail(message).catch((err) =>
+        console.error("Quiz ipoteka email backup error (non-blocking):", err)
+      );
+      return NextResponse.json({ ok: true });
+    }
+
+    let sentToEmail = false;
+    try {
+      sentToEmail = await sendToEmail(message);
+    } catch (emailError) {
+      lastError = emailError;
+      console.error("Quiz ipoteka email fallback error:", emailError);
+    }
+
+    if (!sentToEmail) {
+      const fallbackFilePath = await persistLeadToFile(relayPayload);
       console.warn(
         "Quiz ipoteka lead saved to local file fallback:",
         fallbackFilePath,
