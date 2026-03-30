@@ -47,42 +47,42 @@ const questions: Question[] = [
     title: "В каком месте рассматриваете покупку объекта?",
     type: "option",
     options: ["Москва", "Московская область", "Санкт-Петербург", "Ленинградская область"],
-    imageSrc: "/mexico/kr1.jpg",
+    imageSrc: "/g1.jpg",
   },
   {
     key: "propertyType",
     title: "Что хотите приобрести?",
     type: "option",
     options: ["Новостройка", "Вторичная недвижимость", "Дом", "Коммерческая недвижимость"],
-    imageSrc: "/mexico/kr2.jpg",
+    imageSrc: "/g2.jpg",
   },
   {
     key: "objectStatus",
     title: "Уже есть объект, который хотите купить или только выбираете?",
     type: "option",
     options: ["Да, есть", "Нахожусь в поисках"],
-    imageSrc: "/mexico/kr3.jpg",
+    imageSrc: "/g3.jpg",
   },
   {
     key: "objectPrice",
     title: "Какая приблизительная стоимость объекта?",
     type: "input",
     placeholder: "Введите сумму в рублях",
-    imageSrc: "/mexico/kr1.jpg",
+    imageSrc: "/g4.jpg",
   },
   {
     key: "hasDownPayment",
     title: "Есть ли у вас первоначальный взнос в размере 20% от стоимости объекта?",
     type: "option",
     options: ["Да, есть", "Пока нет"],
-    imageSrc: "/mexico/kr2.jpg",
+    imageSrc: "/g5.jpg",
   },
   {
     key: "purchaseTimeline",
     title: "И последний вопрос! Когда планируете приобретать недвижимость?",
     type: "option",
     options: ["В этом месяце", "В ближайшие 3 месяца", "В ближайшие полгода", "В этом году"],
-    imageSrc: "/mexico/kr3.jpg",
+    imageSrc: "/g6.jpg",
   },
 ];
 
@@ -497,7 +497,7 @@ export function IpotekaQuiz() {
 
             <div className="relative min-h-[240px] sm:min-h-[320px] lg:min-h-[440px] overflow-hidden rounded-3xl border border-white/10">
               <Image
-                src={isQuestionStep && currentQuestion ? currentQuestion.imageSrc : "/mexico/kr2.jpg"}
+                src={isQuestionStep && currentQuestion ? currentQuestion.imageSrc : "/g7.jpg"}
                 alt="Иллюстрация к шагу квиза"
                 fill
                 className="object-cover"
