@@ -37,7 +37,7 @@ export function Header() {
     }
   };
 
-  if (pathname.startsWith("/mexico") || pathname.startsWith("/ipoteka")) {
+  if (pathname.startsWith("/mexico") || pathname.startsWith("/ipoteka") || pathname.startsWith("/partners")) {
     return null;
   }
 

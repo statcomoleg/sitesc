@@ -20,7 +20,7 @@ const serviceLinks = [
 export function Footer() {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/ipoteka")) {
+  if (pathname.startsWith("/ipoteka") || pathname.startsWith("/partners")) {
     return null;
   }
 
