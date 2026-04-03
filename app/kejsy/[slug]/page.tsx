@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronRight, CheckCircle } from "lucide-react";
 import { visibleCases } from "@/app/data/cases";
 import { CaseContactButton } from "./CaseContactButton";
@@ -89,6 +90,25 @@ export default async function CasePage({ params }: PageProps) {
                 <p key={i}>{paragraph}</p>
               ))}
             </div>
+
+            {caseItem.heroImage && (
+              <div className="mt-8 pt-6 border-t border-white/[0.06]">
+                <p className="text-text font-[family-name:var(--font-heading)] font-semibold mb-4">
+                  Фото объекта:
+                </p>
+                <div className="relative w-full overflow-hidden rounded-2xl border border-white/10">
+                  <Image
+                    src={caseItem.heroImage}
+                    alt={caseItem.title}
+                    width={800}
+                    height={500}
+                    className="w-full h-auto object-cover pointer-events-none select-none"
+                    sizes="(max-width: 768px) 100vw, 800px"
+                    draggable={false}
+                  />
+                </div>
+              </div>
+            )}
 
             {caseItem.screenshots && caseItem.screenshots.length > 0 && (
               <div className="mt-8 pt-6 border-t border-white/[0.06]">
