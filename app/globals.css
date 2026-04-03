@@ -157,6 +157,23 @@ select.contact-service-select option:first-of-type {
   -webkit-text-fill-color: #9a8f85;
 }
 
+/* ---- Ipoteka city select (dark panel + gradient option text) ---- */
+select.ipoteka-city-select.gradient-text {
+  -webkit-text-fill-color: transparent;
+}
+
+select.ipoteka-city-select option,
+select.ipoteka-city-select optgroup {
+  background-color: #111118;
+  color: #f4a460;
+  -webkit-text-fill-color: #f4a460;
+}
+
+select.ipoteka-city-select option:first-of-type {
+  color: #9a8f85;
+  -webkit-text-fill-color: #9a8f85;
+}
+
 /* ---- Grain texture ---- */
 .grain::before {
   content: "";

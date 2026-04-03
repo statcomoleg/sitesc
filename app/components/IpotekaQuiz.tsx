@@ -50,39 +50,18 @@ const questions: Question[] = [
     imageSrc: "/g1.jpg",
   },
   {
-    key: "propertyType",
-    title: "Что хотите приобрести?",
-    type: "option",
-    options: ["Новостройка", "Вторичная недвижимость", "Дом", "Коммерческая недвижимость"],
-    imageSrc: "/g2.jpg",
-  },
-  {
-    key: "objectStatus",
-    title: "Уже есть объект, который хотите купить или только выбираете?",
-    type: "option",
-    options: ["Да, есть", "Нахожусь в поисках"],
-    imageSrc: "/g3.jpg",
-  },
-  {
     key: "objectPrice",
     title: "Какая приблизительная стоимость объекта?",
     type: "input",
     placeholder: "Введите сумму в рублях",
-    imageSrc: "/g4.jpg",
+    imageSrc: "/g2.jpg",
   },
   {
     key: "hasDownPayment",
     title: "Есть ли у вас первоначальный взнос в размере 20% от стоимости объекта?",
     type: "option",
     options: ["Да, есть", "Пока нет"],
-    imageSrc: "/g5.jpg",
-  },
-  {
-    key: "purchaseTimeline",
-    title: "И последний вопрос! Когда планируете приобретать недвижимость?",
-    type: "option",
-    options: ["В этом месяце", "В ближайшие 3 месяца", "В ближайшие полгода", "В этом году"],
-    imageSrc: "/g6.jpg",
+    imageSrc: "/g3.jpg",
   },
 ];
 
@@ -405,7 +384,9 @@ export function IpotekaQuiz() {
                       <select
                         value={effectiveCity}
                         onChange={(event) => setForm((prev) => ({ ...prev, city: event.target.value }))}
-                        className="w-full rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 text-text focus:outline-none focus:ring-2 focus:ring-primary/60"
+                        className={`ipoteka-city-select w-full rounded-xl border border-white/10 bg-dark-card px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/60 appearance-none cursor-pointer font-medium ${
+                          effectiveCity ? "gradient-text" : "text-text-muted"
+                        }`}
                         required
                       >
                         <option value="">Выберите город</option>
@@ -497,7 +478,7 @@ export function IpotekaQuiz() {
 
             <div className="relative min-h-[240px] sm:min-h-[320px] lg:min-h-[440px] overflow-hidden rounded-3xl border border-white/10">
               <Image
-                src={isQuestionStep && currentQuestion ? currentQuestion.imageSrc : "/g7.jpg"}
+                src={isQuestionStep && currentQuestion ? currentQuestion.imageSrc : "/g4.jpg"}
                 alt="Иллюстрация к шагу квиза"
                 fill
                 className="object-cover"
