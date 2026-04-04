@@ -104,6 +104,7 @@ function toRegionForm(city: string): string {
 }
 
 export function IpotekaQuiz() {
+  const [started, setStarted] = useState(false);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswers>(initialAnswers);
   const [form, setForm] = useState<LeadFormState>(initialForm);
@@ -115,7 +116,7 @@ export function IpotekaQuiz() {
   const totalSteps = questions.length + 1;
   const isQuestionStep = step < questions.length;
   const currentQuestion = isQuestionStep ? questions[step] : null;
-  const showTopOffer = step === 0 || !isQuestionStep;
+  const showTopOffer = !isQuestionStep;
   const priceNumber = Number(answers.objectPrice || 0);
   const downPayment = Math.round(priceNumber * 0.2);
 
@@ -149,7 +150,11 @@ export function IpotekaQuiz() {
   };
 
   const handleBack = () => {
-    setStep((prev) => Math.max(prev - 1, 0));
+    if (step === 0) {
+      setStarted(false);
+      return;
+    }
+    setStep((prev) => prev - 1);
   };
 
   const onSubmit = async (event: React.FormEvent) => {
@@ -190,6 +195,7 @@ export function IpotekaQuiz() {
   };
 
   const handleRestart = () => {
+    setStarted(false);
     setStep(0);
     setAnswers(initialAnswers);
     setForm(initialForm);
@@ -216,6 +222,67 @@ export function IpotekaQuiz() {
             >
               Ошиблись? Заполните заявку заново!
             </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!started) {
+    return (
+      <section className="relative min-h-screen bg-dark py-8 sm:py-10">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-10">
+            <p className="font-[family-name:var(--font-heading)] text-2xl sm:text-3xl font-bold gradient-text tracking-wide">
+              СТАТКРЕДИТ
+            </p>
+          </div>
+
+          <div className="gradient-border p-5 sm:p-8 lg:p-10">
+            <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 lg:gap-8 items-start">
+              <div className="space-y-6">
+                <h1 className="font-[family-name:var(--font-heading)] text-[clamp(1.4rem,3vw,2.2rem)] font-bold text-text leading-tight">
+                  Мы купим для вас любой объект недвижимости в Москве и области с первоначальным взносом{" "}
+                  <span className="gradient-text">20%</span> на{" "}
+                  <span className="gradient-text">20 лет</span>. Без банков, с любой КИ и доходом.
+                </h1>
+
+                <p className="text-text-muted text-sm sm:text-base leading-relaxed">
+                  Мы помогаем тем, кому банки отказали в ипотеке. Мы выкупаем объект недвижимости для вас за любую стоимость
+                  и вы оплачиваете его также, как оплачивали бы ипотеку в банке (ставка на 1%–3% выше, чем в банковской ипотеке).
+                </p>
+
+                <div className="pt-2">
+                  <h2 className="font-[family-name:var(--font-heading)] text-lg sm:text-xl font-semibold text-text">
+                    Хотите, чтобы мы рассчитали для вас условия?
+                  </h2>
+                  <p className="mt-2 text-text-muted text-sm sm:text-base leading-relaxed">
+                    Ответьте всего на 3 вопроса и мы просчитаем для вас точные условия, проценты, платежи, которые будут
+                    прописаны в договоре.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setStarted(true)}
+                  className="cursor-pointer gradient-btn px-8 py-4 text-sm sm:text-base font-semibold uppercase tracking-wide"
+                >
+                  Ответить на вопросы
+                </button>
+              </div>
+
+              <div className="relative min-h-[240px] sm:min-h-[320px] lg:min-h-[480px] overflow-hidden rounded-3xl border border-white/10">
+                <Image
+                  src="/g1.jpg"
+                  alt="Ипотека без банков — Стат-Кредит"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 34vw"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark/75 via-dark/25 to-transparent" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -332,15 +399,13 @@ export function IpotekaQuiz() {
                   )}
 
                   <div className="flex flex-wrap items-center gap-3 pt-2">
-                    {step > 0 && (
-                      <button
-                        type="button"
-                        onClick={handleBack}
-                        className="cursor-pointer rounded-xl border border-white/15 px-5 py-3 text-sm font-medium text-text-muted hover:text-text hover:border-white/25 transition-all duration-200"
-                      >
-                        Назад
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={handleBack}
+                      className="cursor-pointer rounded-xl border border-white/15 px-5 py-3 text-sm font-medium text-text-muted hover:text-text hover:border-white/25 transition-all duration-200"
+                    >
+                      Назад
+                    </button>
                     <button
                       type="button"
                       onClick={handleNext}
