@@ -37,7 +37,7 @@ export function Header() {
     }
   };
 
-  if (pathname.startsWith("/mexico") || pathname.startsWith("/ipoteka") || pathname.startsWith("/partners") || pathname.startsWith("/kanal") || pathname.startsWith("/kreditnye-kanikuly-2026")) {
+  if (pathname.startsWith("/mexico") || pathname.startsWith("/ipoteka") || pathname.startsWith("/partners") || pathname.startsWith("/kanal") || pathname.startsWith("/kanikuly")) {
     return null;
   }
 

@@ -1,23 +1,64 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { Play, Pause, Send, Phone, MessageCircle, ArrowDown } from "lucide-react";
+
+function formatTime(seconds: number): string {
+  if (!isFinite(seconds) || isNaN(seconds)) return "0:00";
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
 
 export function PartnersContent() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [seeking, setSeeking] = useState(false);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
     if (videoRef.current.paused) {
       videoRef.current.play();
-      setPlaying(true);
     } else {
       videoRef.current.pause();
-      setPlaying(false);
     }
   };
+
+  const handleTimeUpdate = useCallback(() => {
+    const v = videoRef.current;
+    if (!v || seeking) return;
+    setCurrentTime(v.currentTime);
+    setProgress(v.duration ? (v.currentTime / v.duration) * 100 : 0);
+  }, [seeking]);
+
+  const handleLoadedMetadata = useCallback(() => {
+    if (videoRef.current) setDuration(videoRef.current.duration);
+  }, []);
+
+  const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = videoRef.current;
+    if (!v) return;
+    const val = Number(e.target.value);
+    const time = (val / 100) * v.duration;
+    v.currentTime = time;
+    setProgress(val);
+    setCurrentTime(time);
+  }, []);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.addEventListener("timeupdate", handleTimeUpdate);
+    v.addEventListener("loadedmetadata", handleLoadedMetadata);
+    return () => {
+      v.removeEventListener("timeupdate", handleTimeUpdate);
+      v.removeEventListener("loadedmetadata", handleLoadedMetadata);
+    };
+  }, [handleTimeUpdate, handleLoadedMetadata]);
 
   return (
     <div className="min-h-screen bg-dark flex flex-col">
@@ -60,7 +101,7 @@ export function PartnersContent() {
               <div className="relative gradient-border !rounded-3xl overflow-hidden">
                 <video
                   ref={videoRef}
-                  className="w-full aspect-video object-cover"
+                  className="w-full aspect-video object-cover cursor-pointer"
                   playsInline
                   preload="metadata"
                   onPlay={() => setPlaying(true)}
@@ -71,24 +112,55 @@ export function PartnersContent() {
                   <source src="/video.mp4" type="video/mp4" />
                 </video>
 
-                <button
-                  onClick={togglePlay}
-                  className={`absolute bottom-4 left-4 flex items-center gap-2 px-4 py-2.5 rounded-xl backdrop-blur-md transition-all cursor-pointer ${
-                    playing
-                      ? "bg-black/50 text-white/70 hover:text-white"
-                      : "bg-primary/90 text-white hover:bg-primary"
-                  }`}
-                >
-                  {playing ? <Pause size={18} /> : <Play size={18} />}
-                  <span className="text-sm font-medium">
-                    {playing ? "Пауза" : "Смотреть"}
-                  </span>
-                </button>
+                {/* Controls bar */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-4 pt-8 pb-3">
+                  {/* Seek bar */}
+                  <div className="relative flex items-center mb-2.5 group">
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      step={0.1}
+                      value={progress}
+                      onChange={handleSeek}
+                      onMouseDown={() => setSeeking(true)}
+                      onMouseUp={() => setSeeking(false)}
+                      onTouchStart={() => setSeeking(true)}
+                      onTouchEnd={() => setSeeking(false)}
+                      className="partners-seekbar w-full h-1 appearance-none bg-white/20 rounded-full cursor-pointer accent-primary"
+                      style={{
+                        background: `linear-gradient(to right, #E35336 ${progress}%, rgba(255,255,255,0.2) ${progress}%)`,
+                      }}
+                    />
+                  </div>
 
-                {!playing && (
+                  {/* Bottom row: play btn + time */}
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={togglePlay}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-xl backdrop-blur-md transition-all cursor-pointer shrink-0 ${
+                        playing
+                          ? "bg-black/50 text-white/70 hover:text-white"
+                          : "bg-primary/90 text-white hover:bg-primary"
+                      }`}
+                    >
+                      {playing ? <Pause size={16} /> : <Play size={16} />}
+                      <span className="text-xs font-medium">
+                        {playing ? "Пауза" : "Смотреть"}
+                      </span>
+                    </button>
+                    <span className="text-white/60 text-xs tabular-nums">
+                      {formatTime(currentTime)} / {formatTime(duration)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Large play overlay (only when paused and not started) */}
+                {!playing && currentTime === 0 && (
                   <button
                     onClick={togglePlay}
                     className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer transition-opacity hover:bg-black/20"
+                    style={{ bottom: "80px" }}
                   >
                     <div className="w-20 h-20 rounded-full bg-primary/90 flex items-center justify-center shadow-[0_0_60px_rgba(227,83,54,0.4)]">
                       <Play size={36} className="text-white ml-1" />
