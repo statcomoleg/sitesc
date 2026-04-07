@@ -20,7 +20,7 @@ const serviceLinks = [
 export function Footer() {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/ipoteka") || pathname.startsWith("/partners") || pathname.startsWith("/kanal")) {
+  if (pathname.startsWith("/ipoteka") || pathname.startsWith("/partners") || pathname.startsWith("/kanal") || pathname.startsWith("/kreditnye-kanikuly-2026")) {
     return null;
   }
 
