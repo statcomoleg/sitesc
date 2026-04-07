@@ -251,7 +251,7 @@ export default function KanikulyPage() {
             {/* Image 3 */}
             <div className="mt-10 rounded-3xl overflow-hidden border border-white/10">
               <Image
-                src="/kk3.png"
+                src="/kk5.png"
                 alt="Кредитные каникулы — процесс оформления"
                 width={900}
                 height={600}
@@ -260,9 +260,6 @@ export default function KanikulyPage() {
                 draggable={false}
               />
             </div>
-
-            {/* Messenger block 3 */}
-            <MessengerBlock />
 
             {/* Section: Мы поможем */}
             <div className="mt-4">
@@ -310,7 +307,7 @@ export default function KanikulyPage() {
             {/* Image 4 */}
             <div className="rounded-3xl overflow-hidden border border-white/10">
               <Image
-                src="/kk4.png"
+                src="/kk6.png"
                 alt="Кредитные каникулы — результаты работы Стат-Кредит"
                 width={900}
                 height={600}
@@ -320,8 +317,6 @@ export default function KanikulyPage() {
               />
             </div>
 
-            {/* Final CTA */}
-            <MessengerBlock />
 
           </div>
         </article>
