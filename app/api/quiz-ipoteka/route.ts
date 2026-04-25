@@ -28,6 +28,7 @@ interface SubmitPayload {
     downPayment?: number;
   };
   pageUrl?: string;
+  source?: string;
 }
 
 function getEnv(name: string): string {
@@ -144,6 +145,7 @@ export async function POST(req: Request) {
     const lead = body.lead || {};
     const computed = body.computed || {};
     const pageUrl = body.pageUrl?.trim() || "Не передан";
+    const source = body.source?.trim() || "";
 
     const name = lead.name?.trim() || "";
     const city = lead.city?.trim() || "";
@@ -161,7 +163,7 @@ export async function POST(req: Request) {
     const downPayment = Number(computed.downPayment || Math.round(objectPrice * 0.2));
 
     const message = [
-      "<b>Новая заявка: квиз ипотека</b>",
+      source ? `<b>Новая заявка: ${escapeHtml(source)}</b>` : "<b>Новая заявка: квиз ипотека</b>",
       "",
       `<b>Имя:</b> ${escapeHtml(name)}`,
       `<b>Телефон:</b> ${escapeHtml(phone)}`,
